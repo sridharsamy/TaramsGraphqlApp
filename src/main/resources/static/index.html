@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+     <style type="text/css">
+     
+     .button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+     
+     </style>
+      <script>
+      
+         $(document).ready(function() {
+        	 
+        	 $("#btnGetAllUsers").click(function() {
+        	    $.ajax({url: "http://localhost:8080/graphql",
+                    contentType: "application/json",
+                    type:'POST',
+                    dataType:"json", 
+                    data: JSON.stringify({
+                       query:`{
+                      	  users{
+                      		id
+                      		userName
+                      		password
+                      		email
+                      		firstName
+                      		lastName
+                      		phone
+                      		city
+                      	  }
+                      	}`
+                    }),   
+        		     success: function (data) {
+        		    	 console.log(data);
+        		           var trHTML = '';
+        		           $.each(data.data.users, function (index,item) {
+        		              trHTML += 
+        		                 '<tr><td>' + item.id + 
+        		                 '</td><td>' + item.userName + 
+        		                 '</td><td>' + item.password + 
+        		                 '</td><td>' + item.email + 
+        		                 '</td><td>' + item.firstName +  
+        		                 '</td><td>' + item.lastName +   
+        		                 '</td><td>' + item.phone + 
+        		                 '</td><td>' + item.city + 
+        		                 '</td> <td> <button onclick="deleteUser('+ item.id+')" id="delete_user"  value='+ item.id +  ' class="button">DELETE</button> </td>' +
+        		                 '</td> <td> <button onclick="getUserToUpdate('+ item.id+')" id="update_user"  value='+ item.id +  ' class="button">UPDATE</button> </td></tr> ' ; 
+        		           });
+        		             $('#records_table').append(trHTML);
+        		         }   
+        		     });
+        	 });
+        	 
+        	/*  function redirectNewUser() {
+	        	     var url = "http://www.(url).com"; 
+	        	   var url = "/membersPage.html";
+	        	    window.location(url);
+        	    } */
+        	    
+        	 $('#btnCreate').click(function() {
+        	     window.location.href = '/newUser.html';
+        	 });
+        	 
+       });
+         
+         function deleteUser(id) {
+        	 console.log(id);
+        	var userId =id;
+        	    $.ajax({url: "http://localhost:8080/graphql",
+                    contentType: "application/json",
+                    type:'POST',
+                    dataType:"json", 
+                    data: JSON.stringify({
+                    	query:`mutation{
+                      	  deleteUser(id:${userId}) 
+                      	  {
+                      	    id  
+                      	  }
+                      	}`
+                    }),   
+        		     success: function (data) {
+        		    	 console.log("success "+data);
+        		           
+        		         },
+        		         error: function(result){
+        		        	 console.log("Something went wrong while delete");
+        	            	 console.log(result);
+        	             }
+        		     });
+     	 }
+         
+         function saveUpdatedUser(id) {
+        	 console.log("saveUpdatedUser = "+id);
+        	 var userid =id;
+        	 var username ="sridhar";
+        	 var password ="123456";
+        	 var email ="sri@gmailcom";
+        	 var firstname ="sri";
+        	 var lastname ="sai";
+        	 var phone ="122112";
+        	 var city ="NY";
+        	    $.ajax({url: "http://localhost:8080/graphql",
+                    contentType: "application/json",
+                    type:'POST',
+                    dataType:"json", 
+                    data: JSON.stringify({
+                    	query:`mutation{
+                    		updateUser(id:1
+                    				userName:"sridhar"
+                    				password:"123456"
+                    				email:"sri@gmailcom"
+                    				firstName:"sri"
+                    				lastName:"sai"
+                    				phone:"122112"
+                    				city:"NY"
+                    				)
+                      	  {
+                    			id
+                      	  }
+                      	}`
+                    }),   
+        		     success: function (data) {
+        		    	 console.log("success "+data);
+        		           
+        		         },
+        		         error: function(result){
+        		        	 console.log("Something went wrong while update");
+        	             }
+        		     });
+     	 } 
+         
+         function getUserToUpdate(id) {
+        	 console.log("getUserToUpdate");
+        	var userId =id;
+        	    $.ajax({url: "http://localhost:8080/graphql",
+                    contentType: "application/json",
+                    type:'POST',
+                    dataType:"json", 
+                    data: JSON.stringify({
+                    	query:`query{
+                      	  user(id:${userId}) 
+                      	  {
+                      	    id
+                      	  	userName
+                      	  	password
+                      	  	email
+                      	  	firstName
+                      	  	lastName
+                      	  	phone
+                      		city
+                      	  }
+                      	}`
+                    }),   
+        		     success: function (data) {
+        		    	 console.log("success "+data.data.user.id);
+        		    	 var trHTML = '';
+        		    	 var elementId=$(".someElement").attr("id");
+      		              trHTML += 
+      		             '<tr><td>' + data.data.user.id + 
+   		                 '</td><td> <input type="text"  id="uname" value = "'+data.data.user.userName +'">' +
+   		                 '</td><td> <input type="text" id="upassword" value = "'+data.data.user.password +'">'  + 
+   		                 '</td><td> <input type="text" id="uemail" value = "'+data.data.user.email +'">'  + 
+   		                 '</td><td> <input type="text" id="ufname" value = "'+data.data.user.firstName +'">'  +  
+   		                 '</td><td> <input type="text" id="ulname" value = "'+data.data.user.lastName +'">'  +   
+   		                 '</td><td> <input type="text" id="uphone" value = "'+data.data.user.phone +'">'  + 
+   		                 '</td><td> <input type="text" id="ucity" value = "'+data.data.user.city +'">'  +
+   		              	 '</td> <td> <button onclick="saveUpdatedUser('+ data.data.user.id +')"  class="button">SAVE</button> </td></tr>';
+      		                 
+      		         
+      		             $('#update_table').append(trHTML);
+        		           
+        		         },
+        		         error: function(result){
+        		        	 console.log("Something went wrong while delete");
+        	            	 console.log(result);
+        	             }
+        		     });
+     	 }
+    	 
+      </script>
+   </head>
+   
+   <body>
+      <h1 style="text-align:center;font-family:verdana;color:blue;">Tarams GraphQL Application</h1>
+
+      <hr/>
+      <section>
+         <button class="button" id = "btnGetAllUsers">GET ALL USERS</button>
+         <button class="button" name="redirectNewUser "id ="btnCreate">NEW USER</button>
+         <br/> <br/>
+         
+      </section>
+      
+      <br/> <br/> <br/>
+      
+      <table id="records_table" border='1'>
+    <tr>
+        <th align="center" width="50">Id</th>
+        <th align="center" width="100">UserName</th>
+        <th align="center" width="100">Password</th>
+        <th align="center" width="100">Email</th>
+        <th align="center" width="100">FirstName</th>
+        <th align="center" width="100">LastName</th>
+        <th align="center" width="100">Phone</th>
+        <th align="center" width="100">City</th>
+    </tr>
+	</table>
+	<table id="update_table" border='1'>
+    <tr>
+        <th align="center" width="50">Id</th>
+        <th align="center" width="100">UserName</th>
+        <th align="center" width="100">Password</th>
+        <th align="center" width="100">Email</th>
+        <th align="center" width="100">FirstName</th>
+        <th align="center" width="100">LastName</th>
+        <th align="center" width="100">Phone</th>
+        <th align="center" width="100">City</th>
+    </tr>
+	</table>
+      
+      <hr/>
+   </body>
+</html>
+
+
+ 
