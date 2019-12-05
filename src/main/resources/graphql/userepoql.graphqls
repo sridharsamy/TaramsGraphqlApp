@@ -15,13 +15,12 @@ type Query {
 }
 
 type Mutation {
-updateUser(id: ID!, userName: String!, password: String!,email: String!,firstName: String!,lastName: String!,phone: String!,city: String!): User
-}
-
-type Mutation {
 createUser(userName: String!, password: String!,email: String!,firstName: String!,lastName: String!,phone: String!,city: String! ): User
 }
 
 type Mutation {
 deleteUser(id: ID!): User
+}
+type Mutation {
+updateUser(id: ID!, userName: String!, password: String!,email: String!,firstName: String!,lastName: String!,phone: String!,city: String!): User
 }

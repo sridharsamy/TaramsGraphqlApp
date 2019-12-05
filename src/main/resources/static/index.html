@@ -102,34 +102,38 @@
          
          function saveUpdatedUser(id) {
         	 console.log("saveUpdatedUser = "+id);
-        	 var userid =id;
-        	 var username ="sridhar";
-        	 var password ="123456";
-        	 var email ="sri@gmailcom";
-        	 var firstname ="sri";
-        	 var lastname ="sai";
-        	 var phone ="122112";
-        	 var city ="NY";
+        	 console.log("saveUpdatedUser = "+ $("#uname").val());
+        	 var id =id;
+        	 var userName = $("#uname").val();
+    		 var password = $("#upassword").val();
+    		 var email = $("#uemail").val();
+    		 var firstName = $("#ufname").val();
+    		 var lastName = $("#ulname").val();
+    		 var phone = $("#uphone").val();
+    		 var city = $("#ucity").val();
+    		 
         	    $.ajax({url: "http://localhost:8080/graphql",
                     contentType: "application/json",
                     type:'POST',
                     dataType:"json", 
                     data: JSON.stringify({
-                    	query:`mutation{
-                    		updateUser(id:1
-                    				userName:"sridhar"
-                    				password:"123456"
-                    				email:"sri@gmailcom"
-                    				firstName:"sri"
-                    				lastName:"sai"
-                    				phone:"122112"
-                    				city:"NY"
-                    				)
-                      	  {
-                    			id
-                      	  }
-                      	}`
-                    }),   
+                        query:`mutation updateUser($id: ID!, $userName: String!, $password: String!,$email: String!,$firstName: String!,$lastName: String!,$phone: String!,$city: String!) {
+                        	updateUser(id:$id,userName:$userName,password:$password,email:$email,firstName:$firstName,lastName:$lastName,phone:$phone,city:$city) {
+                      		  id
+                      		  userName
+                      	  } 
+                        }`,
+                        variables: {
+                        id:id,	
+                        userName: userName,
+                        password: password,
+                        email: email,
+                        firstName: firstName,
+                        lastName: lastName,
+                        phone: phone,
+                        city:city,
+                      }   
+                  }),
         		     success: function (data) {
         		    	 console.log("success "+data);
         		           
@@ -138,7 +142,7 @@
         		        	 console.log("Something went wrong while update");
         	             }
         		     });
-     	 } 
+     	 }
          
          function getUserToUpdate(id) {
         	 console.log("getUserToUpdate");
